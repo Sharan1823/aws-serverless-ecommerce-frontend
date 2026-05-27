@@ -39,6 +39,8 @@ function Login() {
       alert("Login Successful 🚀");
 
       window.location.reload();
+      
+      window.location.href = "/";
 
     } catch (error) {
 
