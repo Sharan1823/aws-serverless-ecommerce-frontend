@@ -38,6 +38,8 @@ function Login() {
 
       alert("Login Successful 🚀");
 
+      window.location.reload();
+
     } catch (error) {
 
       console.log(error);
