@@ -30,6 +30,13 @@ function Dashboard() {
     }
   };
 
+  const handleLogout = () => {
+
+    localStorage.removeItem("token");
+
+    window.location.reload();
+  };
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -37,9 +44,20 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100 p-10">
 
-      <h1 className="text-4xl font-bold text-blue-600 mb-10">
-        Orders Dashboard 🚀
-      </h1>
+      <div className="flex justify-between items-center mb-10">
+
+        <h1 className="text-4xl font-bold text-blue-600">
+          Orders Dashboard 🚀
+        </h1>
+
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-5 py-2 rounded-xl hover:bg-red-600 transition"
+        >
+          Logout
+        </button>
+
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
@@ -47,22 +65,28 @@ function Dashboard() {
 
           <div
             key={order.orderId}
-            className="bg-white p-6 rounded-2xl shadow-lg"
+            className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition"
           >
 
             <h2 className="text-2xl font-bold text-gray-700">
               {order.product}
             </h2>
 
-            <p className="mt-2 text-gray-600">
-              Customer: {order.customerName}
+            <p className="mt-3 text-gray-600">
+              <span className="font-semibold">
+                Customer:
+              </span>{" "}
+              {order.customerName}
             </p>
 
             <p className="mt-2 text-gray-600">
-              Quantity: {order.quantity}
+              <span className="font-semibold">
+                Quantity:
+              </span>{" "}
+              {order.quantity}
             </p>
 
-            <p className="mt-2 text-gray-400 text-sm">
+            <p className="mt-3 text-gray-400 text-sm break-words">
               {order.createdAt}
             </p>
 
@@ -70,6 +94,7 @@ function Dashboard() {
         ))}
 
       </div>
+
     </div>
   );
 }
