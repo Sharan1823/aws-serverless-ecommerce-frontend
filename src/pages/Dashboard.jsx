@@ -9,6 +9,8 @@ function Dashboard() {
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [editingOrderId, setEditingOrderId] = useState(null);
 
   const [editCustomerName, setEditCustomerName] = useState("");
@@ -209,113 +211,130 @@ function Dashboard() {
 
       </div>
 
+      <div className="mb-8">
+
+        <input
+          type="text"
+          placeholder="Search orders..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-4 rounded-2xl border outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        {orders.map((order) => (
+        {orders
+          .filter((order) =>
+            order.product.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.customerName.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((order) => (
 
-          <div
-            key={order.orderId}
-            className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition"
-          >
+            <div
+              key={order.orderId}
+              className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition"
+            >
 
-            {editingOrderId === order.orderId ? (
+              {editingOrderId === order.orderId ? (
 
-              <>
+                <>
 
-                <input
-                  type="text"
-                  value={editProduct}
-                  onChange={(e) => setEditProduct(e.target.value)}
-                  className="w-full p-2 border rounded-xl mb-3"
-                />
+                  <input
+                    type="text"
+                    value={editProduct}
+                    onChange={(e) => setEditProduct(e.target.value)}
+                    className="w-full p-2 border rounded-xl mb-3"
+                  />
 
-                <input
-                  type="text"
-                  value={editCustomerName}
-                  onChange={(e) => setEditCustomerName(e.target.value)}
-                  className="w-full p-2 border rounded-xl mb-3"
-                />
+                  <input
+                    type="text"
+                    value={editCustomerName}
+                    onChange={(e) => setEditCustomerName(e.target.value)}
+                    className="w-full p-2 border rounded-xl mb-3"
+                  />
 
-                <input
-                  type="number"
-                  value={editQuantity}
-                  onChange={(e) => setEditQuantity(e.target.value)}
-                  className="w-full p-2 border rounded-xl mb-3"
-                />
-
-                <button
-                  onClick={() => updateOrder(order.orderId)}
-                  className="bg-green-500 text-white px-4 py-2 rounded-xl mr-3"
-                >
-                  Save
-                </button>
-
-                <button
-                  onClick={() => setEditingOrderId(null)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-xl"
-                >
-                  Cancel
-                </button>
-
-              </>
-
-            ) : (
-
-              <>
-
-                <h2 className="text-2xl font-bold text-gray-700">
-                  {order.product}
-                </h2>
-
-                <p className="mt-3 text-gray-600">
-                  <span className="font-semibold">
-                    Customer:
-                  </span>{" "}
-                  {order.customerName}
-                </p>
-
-                <p className="mt-2 text-gray-600">
-                  <span className="font-semibold">
-                    Quantity:
-                  </span>{" "}
-                  {order.quantity}
-                </p>
-
-                <p className="mt-3 text-gray-400 text-sm break-words">
-                  {order.createdAt}
-                </p>
-
-                <div className="flex gap-3 mt-5">
+                  <input
+                    type="number"
+                    value={editQuantity}
+                    onChange={(e) => setEditQuantity(e.target.value)}
+                    className="w-full p-2 border rounded-xl mb-3"
+                  />
 
                   <button
-                    onClick={() => {
-
-                      setEditingOrderId(order.orderId);
-
-                      setEditCustomerName(order.customerName);
-                      setEditProduct(order.product);
-                      setEditQuantity(order.quantity);
-                    }}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded-xl hover:bg-yellow-600"
+                    onClick={() => updateOrder(order.orderId)}
+                    className="bg-green-500 text-white px-4 py-2 rounded-xl mr-3"
                   >
-                    Edit
+                    Save
                   </button>
 
                   <button
-                    onClick={() => deleteOrder(order.orderId)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+                    onClick={() => setEditingOrderId(null)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-xl"
                   >
-                    Delete
+                    Cancel
                   </button>
 
-                </div>
+                </>
 
-              </>
+              ) : (
 
-            )}
+                <>
 
-          </div>
-        ))}
+                  <h2 className="text-2xl font-bold text-gray-700">
+                    {order.product}
+                  </h2>
+
+                  <p className="mt-3 text-gray-600">
+                    <span className="font-semibold">
+                      Customer:
+                    </span>{" "}
+                    {order.customerName}
+                  </p>
+
+                  <p className="mt-2 text-gray-600">
+                    <span className="font-semibold">
+                      Quantity:
+                    </span>{" "}
+                    {order.quantity}
+                  </p>
+
+                  <p className="mt-3 text-gray-400 text-sm break-words">
+                    {order.createdAt}
+                  </p>
+
+                  <div className="flex gap-3 mt-5">
+
+                    <button
+                      onClick={() => {
+
+                        setEditingOrderId(order.orderId);
+
+                        setEditCustomerName(order.customerName);
+                        setEditProduct(order.product);
+                        setEditQuantity(order.quantity);
+                      }}
+                      className="bg-yellow-500 text-white px-4 py-2 rounded-xl hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => deleteOrder(order.orderId)}
+                      className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+
+                  </div>
+
+                </>
+
+              )}
+
+            </div>
+          ))}
 
       </div>
 
