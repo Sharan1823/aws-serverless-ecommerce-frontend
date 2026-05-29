@@ -8,6 +8,9 @@ function Dashboard() {
   const [customerName, setCustomerName] = useState("");
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [status, setStatus] = useState("Pending");
+
+  const [editStatus, setEditStatus] = useState("Pending");
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -54,6 +57,7 @@ function Dashboard() {
           customerName,
           product,
           quantity,
+          status,
         },
         {
           headers: {
@@ -117,6 +121,7 @@ function Dashboard() {
           customerName: editCustomerName,
           product: editProduct,
           quantity: editQuantity,
+          status: editStatus,
         },
         {
           headers: {
@@ -149,6 +154,17 @@ function Dashboard() {
   useEffect(() => {
     fetchOrders();
   }, []);
+  
+  const totalOrders = orders.length;
+
+  const totalQuantity = orders.reduce(
+    (sum, order) => sum + Number(order.quantity || 0),
+    0
+  );
+
+  const uniqueCustomers = new Set(
+    orders.map((order) => order.customerName)
+  ).size;
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
@@ -167,6 +183,26 @@ function Dashboard() {
         </button>
 
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+        <div className="bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
+          <h2 className="text-xl font-semibold">Total Orders</h2>
+          <p className="text-4xl font-bold mt-4">{totalOrders}</p>
+        </div>
+
+        <div className="bg-green-600 text-white p-6 rounded-2xl shadow-lg">
+          <h2 className="text-xl font-semibold">Total Quantity</h2>
+          <p className="text-4xl font-bold mt-4">{totalQuantity}</p>
+        </div>
+
+        <div className="bg-purple-600 text-white p-6 rounded-2xl shadow-lg">
+          <h2 className="text-xl font-semibold">Customers</h2>
+          <p className="text-4xl font-bold mt-4">{uniqueCustomers}</p>
+        </div>
+
+      </div>
+
 
       <div className="bg-white p-6 rounded-2xl shadow-lg mb-10">
 
@@ -199,6 +235,16 @@ function Dashboard() {
             onChange={(e) => setQuantity(e.target.value)}
             className="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400"
           />
+
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Delivered">Delivered</option>
+          </select>
 
         </div>
 
@@ -261,7 +307,15 @@ function Dashboard() {
                     onChange={(e) => setEditQuantity(e.target.value)}
                     className="w-full p-2 border rounded-xl mb-3"
                   />
-
+                  <select
+                    value={editStatus}
+                    onChange={(e) => setEditStatus(e.target.value)}
+                    className="w-full p-2 border rounded-xl mb-3"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
                   <button
                     onClick={() => updateOrder(order.orderId)}
                     className="bg-green-500 text-white px-4 py-2 rounded-xl mr-3"
@@ -299,7 +353,25 @@ function Dashboard() {
                     </span>{" "}
                     {order.quantity}
                   </p>
+                  <p className="mt-2">
 
+                    <span className="font-semibold">
+                      Status:
+                    </span>
+
+                    <span
+                      className={`ml-2 px-3 py-1 rounded-full text-white ${
+                        order.status === "Delivered"
+                          ? "bg-green-500"
+                          : order.status === "Processing"
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
+                    >
+                      {order.status || "Pending"}
+                    </span>
+
+                  </p>
                   <p className="mt-3 text-gray-400 text-sm break-words">
                     {order.createdAt}
                   </p>
@@ -314,6 +386,7 @@ function Dashboard() {
                         setEditCustomerName(order.customerName);
                         setEditProduct(order.product);
                         setEditQuantity(order.quantity);
+                        setEditStatus(order.status || "Pending");
                       }}
                       className="bg-yellow-500 text-white px-4 py-2 rounded-xl hover:bg-yellow-600"
                     >
